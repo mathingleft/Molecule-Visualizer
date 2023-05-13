@@ -5,10 +5,12 @@ using UnityEngine.UI;
 
 public class AddBar : MonoBehaviour
 {
+    /*
     int myFavoriteNumber = 42;
     string myName = "Chris";
     float myFloat = 1.254f;
     char characterExample = 'a';
+    */
     int[] myInts = new int[] {1,2,3,4,5,6,7,8,9};
     public List<GameObject> bars = new List<GameObject>();
 

@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Atom
+  - Central Atom
+  - Single Bond
+  - Double Bond
+  - Triple Bond
+  - Lone Pair
   layers:
   - Default
   - TransparentFX
