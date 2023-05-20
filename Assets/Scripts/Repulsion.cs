@@ -8,9 +8,10 @@ public class Repulsion : MonoBehaviour
     Transform center;
     List<Rigidbody> otherAtoms = new List<Rigidbody>();
     GameObject centralAtom;
-    float range = 100f;
+    float range = 5f;
     float xAngle;
     float yAngle;
+    public Transform centerTransform;
 
     // Start is called before the first frame update
     void Start()
@@ -51,8 +52,8 @@ public class Repulsion : MonoBehaviour
 
         if (this.gameObject == UserRotation.selected && Input.GetMouseButton(0))
         {
-            //this.transform.rotation = calculateRotation();
-            rotationTest();
+            centerTransform.rotation = calculateRotation();
+            //rotationTest();
             Debug.Log("this works!");
         }
     }

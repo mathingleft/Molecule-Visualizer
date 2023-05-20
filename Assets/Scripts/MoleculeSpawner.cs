@@ -13,6 +13,8 @@ public class MoleculeSpawner : MonoBehaviour
     public List<GameObject> atoms = new List<GameObject>();
     public GameObject centralAtom;
     public List<GameObject> lonePairs = new List<GameObject>();
+    public delegate void ChangeName(int bondNum, int lonePairNum);
+    public static event ChangeName OnNameChange;
 
     void Awake()
     {
@@ -50,16 +52,17 @@ public class MoleculeSpawner : MonoBehaviour
 
     public void SpawnObject(string obj)
     {
+        if (atoms.Count + lonePairs.Count >= 6)
+        {
+            return;
+        }
+
         GameObject spawnedObject = null;
         switch (obj)
         {
             case "atom":
-                /*
-                if (atoms.Count => 6) {
-                    break;
-                }
-                */
                 spawnedObject = Instantiate(atomPrefab, Vector3.zero, Quaternion.identity);
+                spawnedObject.GetComponentInChildren<FauxGravityBody>().centralAtom = centralAtom.GetComponent<Attractor>();
                 atoms.Add(spawnedObject);
                 break;
             case "single bond":
@@ -83,6 +86,8 @@ public class MoleculeSpawner : MonoBehaviour
                 break;
         }
 
+        OnNameChange(atoms.Count, lonePairs.Count);
+
         // Destroy(gameObject)
         
         /*
@@ -103,15 +108,22 @@ public class MoleculeSpawner : MonoBehaviour
 
     public void RemoveObject(string obj)
     {
+        if (obj == "atom" && atoms.Count <= 0)
+        {
+            return;
+        }
+
+        if (obj == "lone pair" && lonePairs.Count <= 0)
+        {
+            return;
+        }
+
         switch (obj)
         {
             case "atom":
-                if (atoms.Count > 0)
-                {
-                    GameObject temp = atoms[atoms.Count - 1];
-                    atoms.Remove(temp);
-                    Destroy(temp);
-                }
+                GameObject temp = atoms[atoms.Count - 1];
+                atoms.Remove(temp);
+                Destroy(temp);
                 break;
             case "single bond":
                 break;
@@ -125,5 +137,7 @@ public class MoleculeSpawner : MonoBehaviour
                 print("Error: tried to spawn unknown object");
                 break;
         }
+
+        OnNameChange(atoms.Count, lonePairs.Count);
     }
 }

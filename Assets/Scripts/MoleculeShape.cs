@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class MoleculeShape : MonoBehaviour
 {
-    public TMP_Text moleculeGeometryName;
     public TMP_Text electronGeometryName;
+    public TMP_Text moleculeGeometryName;
+
     string[] electronGeometryTypes = {
-        "",
-        "",
+        "None",
+        "None",
         "Linear",
         "Trigonal Planar",
         "Tetrahedral",
@@ -35,7 +36,9 @@ public class MoleculeShape : MonoBehaviour
         {"Trigonal Bipyramidal", new string[]{
             "Trigonal Bipyramidal", "Seesaw", "T-Shaped", "Linear"}},
         {"Octahedral", new string[]{
-            "Octahedral", "Square Pyramidal", "Sqaure Planar", "T-Shaped", "Linear"}}
+            "Octahedral", "Square Pyramidal", "Sqaure Planar", "T-Shaped", "Linear"}},
+        {"None", new string[]{
+            "None"}}
     };
 
     // Start is called before the first frame update
@@ -48,5 +51,22 @@ public class MoleculeShape : MonoBehaviour
     void Update()
     {
         
+    }
+
+    void OnEnable()
+    {
+        MoleculeSpawner.OnNameChange += moleculeNameUpdate;
+    }
+
+    void OnDisable()
+    {
+        MoleculeSpawner.OnNameChange -= moleculeNameUpdate;
+    }
+
+    public void moleculeNameUpdate(int bondNum, int lonePairNum)
+    {
+        string electronGeometry = electronGeometryTypes[bondNum + lonePairNum];
+        electronGeometryName.text = electronGeometry;
+        moleculeGeometryName.text = molecularGeometryTypes[electronGeometry][lonePairNum];
     }
 }
