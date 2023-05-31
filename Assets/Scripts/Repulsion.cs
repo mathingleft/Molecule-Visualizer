@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Repulsion : MonoBehaviour
 {
-    float forceFactor = 1000f;
+    float forceFactor = 5f;
     Transform center;
     List<Rigidbody> otherAtoms = new List<Rigidbody>();
     GameObject centralAtom;
-    float range = 5f;
+    float range = 10f;
     float xAngle;
     float yAngle;
     public Transform centerTransform;
@@ -32,7 +32,17 @@ public class Repulsion : MonoBehaviour
     {
         foreach (Rigidbody obj in otherAtoms)
         {
-            Vector3 distance = obj.position - center.position;
+            Vector3 distance = transform.position - obj.position;
+
+            float magnitude = distance.magnitude;
+            float distanceScaled = Mathf.InverseLerp(range, 0f, magnitude);
+            float attractStrength = Mathf.Lerp(0f, forceFactor, distanceScaled);
+
+            obj.AddForce(distance.normalized * attractStrength * -1f);
+            /*
+            List<Vector3> forces = new List<Vector3>();
+
+            Vector3 distance = transform.position - obj.position;
             float absoluteDistance = Vector3.Distance(center.position, obj.position);
             float distanceSquared = distance.sqrMagnitude;
 
@@ -40,14 +50,18 @@ public class Repulsion : MonoBehaviour
             float distanceScaled = Mathf.InverseLerp(range, 0, distanceSquared);
             float attractStrength = Mathf.Lerp(0, forceMagnitude, distanceScaled);
 
+            // doesn't work: less x dist should be more x force
             float xForce = forceMagnitude * distance.x / absoluteDistance;
             float yForce = forceMagnitude * distance.y / absoluteDistance;
             float zForce = forceMagnitude * distance.z / absoluteDistance;
 
             Vector3 Force = new Vector3(xForce, yForce, zForce);
 
+            forces.Add(Vector3);
+
             // try to make this from obj to itself
-            obj.AddForce((attractStrength * distance.normalized * Time.fixedDeltaTime));
+            transform.AddForce((attractStrength * distance.normalized * Time.fixedDeltaTime));
+            */
         }
 
         if (this.gameObject == UserRotation.selected && Input.GetMouseButton(0))
@@ -71,6 +85,10 @@ public class Repulsion : MonoBehaviour
         {
             otherAtoms.Add(other.GetComponent<Rigidbody>());
         }
+        if (other.CompareTag("Bond"))
+        {
+            otherAtoms.Add(other.GetComponent<Rigidbody>());
+        }
         if (other.CompareTag("Central Atom"))
         {
             otherAtoms.Add(other.GetComponent<Rigidbody>());
@@ -80,6 +98,14 @@ public class Repulsion : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Atom"))
+        {
+            otherAtoms.Remove(other.GetComponent<Rigidbody>());
+        }
+        if (other.CompareTag("Bond"))
+        {
+            otherAtoms.Remove(other.GetComponent<Rigidbody>());
+        }
+        if (other.CompareTag("Central Atom"))
         {
             otherAtoms.Remove(other.GetComponent<Rigidbody>());
         }

@@ -15,6 +15,8 @@ public class MoleculeSpawner : MonoBehaviour
     public List<GameObject> lonePairs = new List<GameObject>();
     public delegate void ChangeName(int bondNum, int lonePairNum);
     public static event ChangeName OnNameChange;
+    public delegate void SpawnBond(GameObject newBond);
+    public static event SpawnBond OnSpawnBond;
 
     void Awake()
     {
@@ -58,33 +60,34 @@ public class MoleculeSpawner : MonoBehaviour
         }
 
         GameObject spawnedObject = null;
+        Vector3 spawnLocation = new Vector3(0,0,Random.Range(-1f,1f));
         switch (obj)
         {
             case "atom":
-                spawnedObject = Instantiate(atomPrefab, Vector3.zero, Quaternion.identity);
-                spawnedObject.GetComponentInChildren<FauxGravityBody>().centralAtom = centralAtom.GetComponent<Attractor>();
+                spawnedObject = Instantiate(atomPrefab, spawnLocation, Quaternion.identity);
                 atoms.Add(spawnedObject);
                 break;
             case "single bond":
-                spawnedObject = Instantiate(singleBondPrefab, Vector3.zero, Quaternion.identity);
+                spawnedObject = Instantiate(singleBondPrefab, spawnLocation, Quaternion.identity);
                 atoms.Add(spawnedObject);
                 break;
             case "double bond":
-                spawnedObject = Instantiate(doubleBondPrefab, Vector3.zero, Quaternion.identity);
+                spawnedObject = Instantiate(doubleBondPrefab, spawnLocation, Quaternion.identity);
                 atoms.Add(spawnedObject);
                 break;
             case "triple bond":
-                spawnedObject = Instantiate(tripleBondPrefab, Vector3.zero, Quaternion.identity);
+                spawnedObject = Instantiate(tripleBondPrefab, spawnLocation, Quaternion.identity);
                 atoms.Add(spawnedObject);
                 break;
             case "lone pair":
-                spawnedObject = Instantiate(lonePairPrefab, Vector3.zero, Quaternion.identity);
+                spawnedObject = Instantiate(lonePairPrefab, spawnLocation, Quaternion.identity);
                 lonePairs.Add(spawnedObject);
                 break;
             default:
                 print("Error: tried to spawn unknown object");
                 break;
         }
+        spawnedObject.GetComponentInChildren<FauxGravityBody>().centralAtom = centralAtom.GetComponent<Attractor>();
 
         OnNameChange(atoms.Count, lonePairs.Count);
 

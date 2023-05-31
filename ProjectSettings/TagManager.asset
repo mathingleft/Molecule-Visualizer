@@ -10,6 +10,7 @@ TagManager:
   - Double Bond
   - Triple Bond
   - Lone Pair
+  - Bond
   layers:
   - Default
   - TransparentFX

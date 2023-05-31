@@ -39,6 +39,23 @@ public class DegreeHandler : MonoBehaviour
         }
     }
 
+    void OnEnable()
+    {
+        MoleculeSpawner.OnSpawnBond += degreeUpdate;
+    }
+
+    void OnDisable()
+    {
+        MoleculeSpawner.OnSpawnBond -= degreeUpdate;
+    }
+
+    public void degreeUpdate(GameObject newBond)
+    {
+        string electronGeometry = electronGeometryTypes[bondNum + lonePairNum];
+        electronGeometryName.text = electronGeometry;
+        moleculeGeometryName.text = molecularGeometryTypes[electronGeometry][lonePairNum];
+    }
+
     public class Degree
     {
         Transform transform1;
