@@ -429,7 +429,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: atom
+          m_StringArgument: Single Bond
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &50862424
@@ -896,7 +896,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: double bond
+          m_StringArgument: Double Bond
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &640343213
@@ -1300,7 +1300,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: atom
+          m_StringArgument: Single Bond
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &742606094
@@ -2261,7 +2261,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: triple bond
+          m_StringArgument: Triple Bond
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1526139456
@@ -2331,11 +2331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11742cd064b01d341884c3dfa8b9f371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bonds:
-  - {fileID: 1087048194}
-  - {fileID: 1734423215}
-  - {fileID: 704353495}
-  - {fileID: 1741804518}
+  bonds: []
   degreePrefab: {fileID: 6305461131969326834, guid: 6a90ce7b25bdf9c4eaca17d7900b0d82, type: 3}
 --- !u!4 &1668523378
 Transform:
@@ -2790,12 +2786,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c1c4d2ba80137b4a9cb766b0f4fd376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  atomPrefab: {fileID: 7054739720694747485, guid: 394889f5059c3cd4cb42fa67c6f65b38, type: 3}
   singleBondPrefab: {fileID: 7698645574183757377, guid: ed7cd95ab91f4cb46bdd26d3f6ac565a, type: 3}
   doubleBondPrefab: {fileID: 3877299033544811183, guid: dc0fbb7eab8b5514fbef1acf0fefd3a1, type: 3}
   tripleBondPrefab: {fileID: 879125523077417009, guid: 3edc174516cb0e641b79ff2bd9e71a7c, type: 3}
-  lonePairPrefab: {fileID: 0}
-  atoms: []
+  lonePairPrefab: {fileID: 1405796005652960659, guid: bd3e57ae75772bb41a4544698db629fa, type: 3}
+  bonds: []
   centralAtom: {fileID: 834475008}
   lonePairs: []
 --- !u!4 &1948540629
@@ -2906,7 +2901,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: single bond
+          m_StringArgument: Single Bond
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &2082753699

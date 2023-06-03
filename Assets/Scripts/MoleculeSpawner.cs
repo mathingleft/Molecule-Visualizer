@@ -5,22 +5,23 @@ using UnityEngine.XR;
 
 public class MoleculeSpawner : MonoBehaviour
 {
-    public GameObject atomPrefab;
     public GameObject singleBondPrefab;
     public GameObject doubleBondPrefab;
     public GameObject tripleBondPrefab;
     public GameObject lonePairPrefab;
-    public List<GameObject> atoms = new List<GameObject>();
+    public List<GameObject> bonds = new List<GameObject>();
     public GameObject centralAtom;
     public List<GameObject> lonePairs = new List<GameObject>();
     public delegate void ChangeName(int bondNum, int lonePairNum);
     public static event ChangeName OnNameChange;
     public delegate void SpawnBond(GameObject newBond);
     public static event SpawnBond OnSpawnBond;
+    public delegate void RemoveBond(GameObject oldBond);
+    public static event RemoveBond OnRemoveBond;
 
     void Awake()
     {
-        //atoms.Add(centralAtom);
+
     }
 
     // Start is called before the first frame update
@@ -32,29 +33,12 @@ public class MoleculeSpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            SpawnObject("atom");
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SpawnObject("single bond");
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SpawnObject("double bond");
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SpawnObject("triple bond");
-        }
-        */
+
     }
 
     public void SpawnObject(string obj)
     {
-        if (atoms.Count + lonePairs.Count >= 6)
+        if (bonds.Count + lonePairs.Count >= 6)
         {
             return;
         }
@@ -63,84 +47,79 @@ public class MoleculeSpawner : MonoBehaviour
         Vector3 spawnLocation = new Vector3(0,0,Random.Range(-1f,1f));
         switch (obj)
         {
-            case "atom":
-                spawnedObject = Instantiate(atomPrefab, spawnLocation, Quaternion.identity);
-                atoms.Add(spawnedObject);
-                break;
-            case "single bond":
+            case "Single Bond":
                 spawnedObject = Instantiate(singleBondPrefab, spawnLocation, Quaternion.identity);
-                atoms.Add(spawnedObject);
+                bonds.Add(spawnedObject);
                 break;
-            case "double bond":
+            case "Double Bond":
                 spawnedObject = Instantiate(doubleBondPrefab, spawnLocation, Quaternion.identity);
-                atoms.Add(spawnedObject);
+                bonds.Add(spawnedObject);
                 break;
-            case "triple bond":
+            case "Triple Bond":
                 spawnedObject = Instantiate(tripleBondPrefab, spawnLocation, Quaternion.identity);
-                atoms.Add(spawnedObject);
+                bonds.Add(spawnedObject);
                 break;
-            case "lone pair":
+            case "Lone Pair":
                 spawnedObject = Instantiate(lonePairPrefab, spawnLocation, Quaternion.identity);
                 lonePairs.Add(spawnedObject);
                 break;
             default:
-                print("Error: tried to spawn unknown object");
+                print("Error: tried to spawn an unknown object");
                 break;
         }
         spawnedObject.GetComponentInChildren<FauxGravityBody>().centralAtom = centralAtom.GetComponent<Attractor>();
+        OnSpawnBond(spawnedObject);
 
-        OnNameChange(atoms.Count, lonePairs.Count);
-
-        // Destroy(gameObject)
-        
-        /*
-        if(spawnedObject != null)
-        {
-            for (int i = 0; spawnedObject.GetChild(i) is object; i++) {
-                MeshRenderer objRenderer = spawnedObject.GetChild(i).GetComponent<MeshRenderer>();
-                float redness = Random.Range(0f, 1f);
-                float greenness = Random.Range(0f, 1f);
-                float blueness = Random.Range(0f, 1f);
-                float opacity = Random.Range(0f, 1f);
-                Color color = new Color(redness, greenness, blueness, opacity);
-                objRenderer.material.color = color;
-            }
-        }
-        */
+        OnNameChange(bonds.Count, lonePairs.Count);
     }
 
     public void RemoveObject(string obj)
     {
-        if (obj == "atom" && atoms.Count <= 0)
+        if (obj == "Lone Pair" && lonePairs.Count <= 0)
         {
             return;
         }
 
-        if (obj == "lone pair" && lonePairs.Count <= 0)
+        if (obj != "Lone Pair" && bonds.Count <= 0)
         {
             return;
         }
+
+        /* 
+         * Look through bonds list
+         * if tag == tag:
+         *   delete
+         */
+        Debug.Log("try to delete " + obj);
 
         switch (obj)
         {
-            case "atom":
-                GameObject temp = atoms[atoms.Count - 1];
-                atoms.Remove(temp);
-                Destroy(temp);
+            case "Single Bond":
+            case "Double Bond":
+            case "Triple Bond":
+                foreach (GameObject bond in bonds)
+                {
+                    if (bond.tag == obj)
+                    {
+                        bonds.Remove(bond);
+                        OnRemoveBond(bond);
+                        Destroy(bond);
+                        break;
+                    }
+                }
                 break;
-            case "single bond":
-                break;
-            case "double bond":
-                break;
-            case "triple bond":
-                break;
-            case "lone pair":
+            case "Lone Pair":
+                GameObject lonePair = lonePairs[lonePairs.Count - 1];
+                lonePairs.Remove(lonePair);
+                OnRemoveBond(lonePair);
+                Destroy(lonePair);
                 break;
             default:
-                print("Error: tried to spawn unknown object");
+                print("Error: tried to delete an unknown object");
                 break;
         }
 
-        OnNameChange(atoms.Count, lonePairs.Count);
+
+        OnNameChange(bonds.Count, lonePairs.Count);
     }
 }

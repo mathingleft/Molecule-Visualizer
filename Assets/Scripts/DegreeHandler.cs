@@ -41,26 +41,48 @@ public class DegreeHandler : MonoBehaviour
 
     void OnEnable()
     {
-        MoleculeSpawner.OnSpawnBond += degreeUpdate;
+        MoleculeSpawner.OnSpawnBond += addBondDegrees;
+        MoleculeSpawner.OnRemoveBond += removeLastBondDegrees;
     }
 
     void OnDisable()
     {
-        MoleculeSpawner.OnSpawnBond -= degreeUpdate;
+        MoleculeSpawner.OnSpawnBond -= addBondDegrees;
+        MoleculeSpawner.OnRemoveBond -= removeLastBondDegrees;
     }
 
-    public void degreeUpdate(GameObject newBond)
+    //
+    public void addBondDegrees(GameObject newBond)
     {
-        string electronGeometry = electronGeometryTypes[bondNum + lonePairNum];
-        electronGeometryName.text = electronGeometry;
-        moleculeGeometryName.text = molecularGeometryTypes[electronGeometry][lonePairNum];
+        bonds.Add(newBond);
+
+        for (int i = 0; i < bonds.Count - 1; i++)
+        {
+            Transform iTransform = bonds[i].transform;
+            // instantiate text object from prefab
+            TMP_Text t = Instantiate(degreePrefab).GetComponent<TMP_Text>();
+            // create new degree object for the new prefab
+            Degree d = new Degree(newBond.transform, iTransform, t);
+            // add it to degrees list
+            degrees.Add(d);
+        }
+    }
+
+    public void removeLastBondDegrees(GameObject oldBond)
+    {
+        for (int i = 0; i < degrees.Count; i++)
+        {
+            Degree degree = degrees[degrees.Count - 1];
+            degrees.Remove(degree);
+            Destroy(degree.text.gameObject);
+        }
     }
 
     public class Degree
     {
         Transform transform1;
         Transform transform2;
-        TMP_Text text;
+        public TMP_Text text;
 
         public Degree(Transform transform1, Transform transform2, TMP_Text text) {
             this.transform1 = transform1;

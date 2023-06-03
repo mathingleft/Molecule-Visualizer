@@ -14,7 +14,8 @@ public class Repulsion : MonoBehaviour
     public Transform centerTransform;
 
     // Start is called before the first frame update
-    void Start()
+
+    void Awake()
     {
         center = GetComponent<Transform>();
         centralAtom = GameObject.Find("Central Atom");
@@ -27,6 +28,22 @@ public class Repulsion : MonoBehaviour
         
     }
     */
+
+    void OnEnable()
+    {
+        MoleculeSpawner.OnRemoveBond += removeRigidbody;
+    }
+
+    void OnDisable()
+    {
+        MoleculeSpawner.OnRemoveBond -= removeRigidbody;
+    }
+
+    void removeRigidbody(GameObject gameObject)
+    {
+        otherAtoms.Remove(gameObject.GetComponentInChildren<Rigidbody>());
+        Debug.Log(otherAtoms.Count);
+    }
 
     void FixedUpdate()
     {
