@@ -98,6 +98,11 @@ public class Repulsion : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Rigidbody rb = other.GetComponent<Rigidbody>();
+        if(otherAtoms.Contains(rb))
+        {
+            return;
+        }
         if (other.CompareTag("Atom"))
         {
             otherAtoms.Add(other.GetComponent<Rigidbody>());

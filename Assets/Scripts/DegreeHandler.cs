@@ -56,13 +56,16 @@ public class DegreeHandler : MonoBehaviour
     {
         bonds.Add(newBond);
 
+        Transform newBondTransform = newBond.GetComponent<Bond>().getBondTransform();
+
         for (int i = 0; i < bonds.Count - 1; i++)
+        //for (int i = bonds.Count - 1; i > 0; i--)
         {
-            Transform iTransform = bonds[i].transform;
+            Transform iTransform = bonds[i].GetComponent<Bond>().getBondTransform();
             // instantiate text object from prefab
             TMP_Text t = Instantiate(degreePrefab).GetComponent<TMP_Text>();
             // create new degree object for the new prefab
-            Degree d = new Degree(newBond.transform, iTransform, t);
+            Degree d = new Degree(newBondTransform, iTransform, t);
             // add it to degrees list
             degrees.Add(d);
         }
@@ -70,7 +73,9 @@ public class DegreeHandler : MonoBehaviour
 
     public void removeLastBondDegrees(GameObject oldBond)
     {
-        for (int i = 0; i < degrees.Count; i++)
+        bonds.Remove(oldBond);
+
+        for (int i = 0; i < bonds.Count; i++)
         {
             Degree degree = degrees[degrees.Count - 1];
             degrees.Remove(degree);
