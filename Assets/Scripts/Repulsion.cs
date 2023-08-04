@@ -42,7 +42,7 @@ public class Repulsion : MonoBehaviour
     void removeRigidbody(GameObject gameObject)
     {
         otherAtoms.Remove(gameObject.GetComponentInChildren<Rigidbody>());
-        Debug.Log(otherAtoms.Count);
+        // Debug.Log(otherAtoms.Count);
     }
 
     void FixedUpdate()
@@ -85,7 +85,7 @@ public class Repulsion : MonoBehaviour
         {
             centerTransform.rotation = calculateRotation();
             //rotationTest();
-            Debug.Log("this works!");
+            // Debug.Log("this works!");
         }
     }
 

@@ -9,15 +9,19 @@ public class MoleculeSpawner : MonoBehaviour
     public GameObject doubleBondPrefab;
     public GameObject tripleBondPrefab;
     public GameObject lonePairPrefab;
+    public GameObject atomPrefab;
+    public List<GameObject> atoms = new List<GameObject>();
     public List<GameObject> bonds = new List<GameObject>();
-    public GameObject centralAtom;
     public List<GameObject> lonePairs = new List<GameObject>();
+    public GameObject centralAtom;
     public delegate void ChangeName(int bondNum, int lonePairNum);
     public static event ChangeName OnNameChange;
     public delegate void SpawnBond(GameObject newBond);
     public static event SpawnBond OnSpawnBond;
     public delegate void RemoveBond(GameObject oldBond);
     public static event RemoveBond OnRemoveBond;
+    public delegate int FixBrokenCases(int bondNum, int lonePairNum);
+    public static event FixBrokenCases OnFixBrokenCases;
 
     void Awake()
     {
@@ -27,7 +31,7 @@ public class MoleculeSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        centralAtom = GameObject.FindWithTag("Central Atom");
     }
 
     // Update is called once per frame
@@ -38,26 +42,51 @@ public class MoleculeSpawner : MonoBehaviour
 
     public void SpawnObject(string obj)
     {
-        if (bonds.Count + lonePairs.Count >= 6)
+        if (atoms.Count + lonePairs.Count >= 6)
         {
             return;
         }
 
         GameObject spawnedObject = null;
-        Vector3 spawnLocation = new Vector3(0,0,Random.Range(-1f,1f));
+        Vector3 spawnLocation = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f,1f));
+
+        if (obj == "Lone Pair")
+        {
+            spawnedObject = Instantiate(lonePairPrefab, spawnLocation, Quaternion.identity);
+            lonePairs.Add(spawnedObject);
+        }
+        else
+        {
+            Dictionary<string, GameObject> bondPrefabs = new Dictionary<string, GameObject>(){
+                {"Single Bond", singleBondPrefab},
+                {"Double Bond", doubleBondPrefab},
+                {"Triple Bond", tripleBondPrefab},
+                {"Lone Pair", lonePairPrefab}
+            };
+
+            spawnedObject = Instantiate(atomPrefab, spawnLocation, Quaternion.identity);
+            atoms.Add(spawnedObject);
+
+            GameObject bondPrefab = bondPrefabs[obj];
+            GameObject bond = Instantiate(bondPrefab, Vector3.zero, Quaternion.identity);
+            bonds.Add(bond);
+            bond.GetComponent<BondPosition>().assignAtoms(centralAtom, spawnedObject);
+        }
+
+        /*
         switch (obj)
         {
             case "Single Bond":
                 spawnedObject = Instantiate(singleBondPrefab, spawnLocation, Quaternion.identity);
-                bonds.Add(spawnedObject);
+                atoms.Add(spawnedObject);
                 break;
             case "Double Bond":
                 spawnedObject = Instantiate(doubleBondPrefab, spawnLocation, Quaternion.identity);
-                bonds.Add(spawnedObject);
+                atoms.Add(spawnedObject);
                 break;
             case "Triple Bond":
                 spawnedObject = Instantiate(tripleBondPrefab, spawnLocation, Quaternion.identity);
-                bonds.Add(spawnedObject);
+                atoms.Add(spawnedObject);
                 break;
             case "Lone Pair":
                 spawnedObject = Instantiate(lonePairPrefab, spawnLocation, Quaternion.identity);
@@ -67,10 +96,14 @@ public class MoleculeSpawner : MonoBehaviour
                 print("Error: tried to spawn an unknown object");
                 break;
         }
-        spawnedObject.GetComponentInChildren<FauxGravityBody>().centralAtom = centralAtom.GetComponent<Attractor>();
+        */
+
+
+        //spawnedObject.GetComponentInChildren<FauxGravityBody>().centralAtom = centralAtom.GetComponent<Attractor>();
         OnSpawnBond(spawnedObject);
 
-        OnNameChange(bonds.Count, lonePairs.Count);
+        OnNameChange(atoms.Count, lonePairs.Count);
+        OnFixBrokenCases(atoms.Count, lonePairs.Count);
     }
 
     public void RemoveObject(string obj)
@@ -80,7 +113,7 @@ public class MoleculeSpawner : MonoBehaviour
             return;
         }
 
-        if (obj != "Lone Pair" && bonds.Count <= 0)
+        if (obj != "Lone Pair" && atoms.Count <= 0)
         {
             return;
         }
@@ -90,7 +123,7 @@ public class MoleculeSpawner : MonoBehaviour
          * if tag == tag:
          *   delete
          */
-        Debug.Log("try to delete " + obj);
+        // Debug.Log("try to delete " + obj);
 
         switch (obj)
         {
@@ -101,8 +134,11 @@ public class MoleculeSpawner : MonoBehaviour
                 {
                     if (bond.tag == obj)
                     {
+                        GameObject atom = bond.GetComponent<BondPosition>().atoms[1];
+                        atoms.Remove(atom);
+                        OnRemoveBond(atom);
+                        Destroy(atom);
                         bonds.Remove(bond);
-                        OnRemoveBond(bond);
                         Destroy(bond);
                         break;
                     }
@@ -120,6 +156,6 @@ public class MoleculeSpawner : MonoBehaviour
         }
 
 
-        OnNameChange(bonds.Count, lonePairs.Count);
+        OnNameChange(atoms.Count, lonePairs.Count);
     }
 }

@@ -27,18 +27,18 @@ public class MoleculeShape : MonoBehaviour
 
     Dictionary<string, string[]> molecularGeometryTypes = new Dictionary<string, string[]>()
     {
-        {"Linear", new string[]{
-            "Linear"}},
-        {"Trigonal Planar", new string[]{
-            "Trigonal Planar", "Bent"}},
-        {"Tetrahedral", new string[]{
-            "Tetrahedral", "Trigonal Pyramidal","Bent"}},
-        {"Trigonal Bipyramidal", new string[]{
-            "Trigonal Bipyramidal", "Seesaw", "T-Shaped", "Linear"}},
-        {"Octahedral", new string[]{
-            "Octahedral", "Square Pyramidal", "Sqaure Planar", "T-Shaped", "Linear"}},
         {"None", new string[]{
-            "None"}}
+            "None","","","","",""}},
+        {"Linear", new string[]{
+            "Linear", "None","","","",""}},
+        {"Trigonal Planar", new string[]{
+            "Trigonal Planar", "Bent", "None","","",""}},
+        {"Tetrahedral", new string[]{
+            "Tetrahedral", "Trigonal Pyramidal","Bent", "None","",""}},
+        {"Trigonal Bipyramidal", new string[]{
+            "Trigonal Bipyramidal", "Seesaw", "T-Shaped", "Linear", "None", ""}},
+        {"Octahedral", new string[]{
+            "Octahedral", "Square Pyramidal", "Sqaure Planar", "T-Shaped", "Linear", "None"}}
     };
 
     // Start is called before the first frame update
@@ -67,6 +67,6 @@ public class MoleculeShape : MonoBehaviour
     {
         string electronGeometry = electronGeometryTypes[bondNum + lonePairNum];
         electronGeometryName.text = electronGeometry;
-        moleculeGeometryName.text = molecularGeometryTypes[electronGeometry][lonePairNum];
+        moleculeGeometryName.text = molecularGeometryTypes[electronGeometry][Mathf.Clamp(lonePairNum,0,5)];
     }
 }

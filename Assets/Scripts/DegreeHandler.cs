@@ -11,7 +11,7 @@ public class DegreeHandler : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {  
+    {
         for (int i = 0; i < bonds.Count - 1; i++)
         {
             Transform transform1 = bonds[i].transform;
@@ -54,6 +54,11 @@ public class DegreeHandler : MonoBehaviour
     //
     public void addBondDegrees(GameObject newBond)
     {
+        if (newBond.CompareTag("Lone Pair"))
+        {
+            return;
+        }
+
         bonds.Add(newBond);
 
         Transform newBondTransform = newBond.GetComponent<Bond>().getBondTransform();
@@ -75,18 +80,21 @@ public class DegreeHandler : MonoBehaviour
     {
         bonds.Remove(oldBond);
 
-        for (int i = 0; i < bonds.Count; i++)
+        for (int i = degrees.Count-1; i >= 0; i--)
         {
-            Degree degree = degrees[degrees.Count - 1];
-            degrees.Remove(degree);
-            Destroy(degree.text.gameObject);
+            if (degrees[i].transform1 == oldBond.transform || degrees[i].transform2 == oldBond.transform)
+            {
+                Degree degree = degrees[i];
+                degrees.Remove(degree);
+                Destroy(degree.text.gameObject);
+            }
         }
     }
 
     public class Degree
     {
-        Transform transform1;
-        Transform transform2;
+        public Transform transform1;
+        public Transform transform2;
         public TMP_Text text;
 
         public Degree(Transform transform1, Transform transform2, TMP_Text text) {
@@ -98,7 +106,7 @@ public class DegreeHandler : MonoBehaviour
         public void setDegrees()
         {
             float angle = Vector3.Angle(transform1.position,transform2.position);
-            text.text = angle.ToString("F") + "°";
+            text.text = angle.ToString("F") + "\u00B0";
         }
 
         public void setMiddleVector() {

@@ -25,7 +25,7 @@ public class UserRotation : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            Debug.Log(hit.collider.name);
+            // Debug.Log(hit.collider.name);
             selected = hit.collider.gameObject;
         }
     }
